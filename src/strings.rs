@@ -1,4 +1,5 @@
 use std::str;
+use nom::IResult;
 
 #[derive(Debug, PartialEq)]
 pub struct AString(String);
@@ -63,8 +64,12 @@ impl ISOString for DString {
     }
 }
 
+named_args!(pub astring(len: usize) <AString>, map_res!(take!(len), AString::parse));
+named_args!(pub dstring(len: usize) <DString>, map_res!(take!(len), DString::parse));
+
 #[cfg(test)]
 mod tests {
+    use nom::IResult;
     use super::*;
 
     #[test]
@@ -131,5 +136,15 @@ mod tests {
         let r = DString::parse(b"foo?");
         assert!(r.is_err());
         assert_eq!(r.unwrap_err(), Error("Invalid string"));
+    }
+
+    #[test]
+    fn nom_astring() {
+        assert_eq!(astring(&b"FOO"[..], 3), IResult::Done(&b""[..], AString("FOO".to_string())));
+    }
+
+    #[test]
+    fn nom_dstring() {
+        assert_eq!(dstring(&b"FOO?"[..], 4), IResult::Done(&b""[..], DString("FOO?".to_string())));
     }
 }
