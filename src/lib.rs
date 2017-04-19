@@ -5,6 +5,9 @@ extern crate nom;
 
 mod strings;
 
+use std::str::FromStr;
+use strings::FromISOString;
+
 pub const SECTOR_SIZE: usize = 2048;
 
 #[allow(non_camel_case_types)]
@@ -54,11 +57,19 @@ impl DateTime {
 
     pub fn now() -> DateTime { unimplemented!(); }
 
-    //named!(pub parse<&[u8], DateTime>,
-    //    do_parse!(
-    //        year:
-    //    )
-    //);
+    named!(pub parse<DateTime>,
+        do_parse!(
+            year: map_res!(call!(strings::dstring, 4), u16::from_isostring) >>
+            month: map_res!(call!(strings::dstring, 2), u8::from_isostring) >>
+            day: map_res!(call!(strings::dstring, 2), u8::from_isostring) >>
+            hour: map_res!(call!(strings::dstring, 2), u8::from_isostring) >>
+            minute: map_res!(call!(strings::dstring, 2), u8::from_isostring) >>
+            second: map_res!(call!(strings::dstring, 2), u8::from_isostring) >>
+            sp: map_res!(call!(strings::dstring, 2), u8::from_isostring) >>
+            tmz: call!(nom::le_u8) >>
+            (DateTime::new(year, month, day, hour, minute, second, sp, tmz))
+        )
+    );
 }
 
 
