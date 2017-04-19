@@ -3,6 +3,8 @@
 #[macro_use]
 extern crate nom;
 
+mod strings;
+
 pub const SECTOR_SIZE: usize = 2048;
 
 #[allow(non_camel_case_types)]
@@ -23,35 +25,7 @@ enum NumberFormat {
     sint32_LSBMSB(i32,i32)
 }
 
-struct AString(String);
 
-impl AString {
-    pub fn is_valid_byte(b: u8) -> bool {
-        match b {
-            b'A'...b'Z' => true,
-            b'0'...b'9' => true,
-            b'_' => true,
-            _ => false
-        }
-    }
-}
-
-struct DString(String);
-
-impl DString {
-    pub fn is_valid_byte(b: u8) -> bool {
-        if AString::is_valid_byte(b) {
-            true
-        } else {
-            match b {
-                b'!' | b'"' | b'%' | b'&' | b'\'' | b'(' | b')' |
-                b'*' | b'+' | b',' | b'-' | b'.' | b'/' | b':' |
-                b';' | b'<' | b'=' | b'>' | b'?' => true,
-                _ => false
-            }
-        }
-    }
-}
 
 struct DateTime {
     year: u16,
@@ -106,29 +80,6 @@ mod tests {
     use std::io::Read;
 
     use super::*;
-
-    #[test]
-    fn astring_valid_byte() {
-        assert!(AString::is_valid_byte(b'A'));
-    }
-
-    #[test]
-    #[should_panic]
-    fn astring_invalid_byte() {
-        assert!(AString::is_valid_byte(b'!'));
-    }
-
-    #[test]
-    fn dstring_valid_byte() {
-        assert!(DString::is_valid_byte(b'!'));
-    }
-
-    #[test]
-    #[should_panic]
-    fn dstring_invalid_byte() {
-        assert!(DString::is_valid_byte(b'a'));
-    }
-
 
     #[test]
     #[ignore]
