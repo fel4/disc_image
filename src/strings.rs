@@ -32,11 +32,11 @@ pub trait ISOString : From<String> {
 }
 
 pub trait FromISOString : FromStr {
-    fn from_isostring<S: ISOString>(s: &S) -> Result<Self, <Self as FromStr>::Err>;
+    fn from_isostring<S: ISOString>(s: S) -> Result<Self, <Self as FromStr>::Err>;
 }
 
 impl<T> FromISOString for T where T: FromStr {
-    fn from_isostring<S: ISOString>(s: &S) -> Result<Self, <T as FromStr>::Err> {
+    fn from_isostring<S: ISOString>(s: S) -> Result<Self, <T as FromStr>::Err> {
         Self::from_str(&s.as_string())
     }
 }
