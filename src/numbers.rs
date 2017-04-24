@@ -43,28 +43,52 @@ named!(pub int32_LSBMSB<(u32, u32)>,
 
 #[cfg(test)]
 mod tests {
+    use nom::IResult;
     use super::*;
 
     #[test]
-    fn sint8_valid() { unimplemented!(); }
+    fn sint8_valid() {
+        let i = &b"\xFF"[..];
+        assert_eq!(sint8(i), IResult::Done(&b""[..], -1));
+    }
 
     #[test]
-    fn sint8_invalid() { unimplemented!(); }
+    fn sint8_invalid() {
+        let i = &b"\xFF"[..];
+        assert_ne!(sint8(i), IResult::Done(&b""[..], -2));
+    }
 
     #[test]
-    fn sint16LSB_valid() { unimplemented!(); }
+    fn sint16LSB_valid() {
+        let i = &b"\xFF\x00"[..];
+        assert_eq!(sint16_LSB(i), IResult::Done(&b""[..], 255));
+    }
 
     #[test]
-    fn sint16LSB_invalid() { unimplemented!(); }
+    fn sint16LSB_invalid() {
+        let i = &b"\x00\xFF"[..];
+        assert_ne!(sint16_LSB(i), IResult::Done(&b""[..], 255));
+    }
 
     #[test]
-    fn sint16MSB_valid() { unimplemented!(); }
+    fn sint16MSB_valid() {
+        let i = &b"\x80\xFF"[..];
+        assert_eq!(sint16_MSB(i), IResult::Done(&b""[..], -32513));
+    }
 
     #[test]
-    fn sint16MSB_invalid() { unimplemented!(); }
+    fn sint16MSB_invalid() {
+        let i = &b"\xFF\x00"[..];
+        assert_ne!(sint16_MSB(i), IResult::Done(&b""[..], 255));
+    }
 
     #[test]
-    fn sint16LSBMSB_valid() { unimplemented!(); }
+    fn sint16LSBMSB_valid() {
+        let i = &b"\x00\xFF\xFF\x00"[..];
+        assert_eq!(sint16_LSBMSB(i), IResult::Done(&b""[..], (-256, -256)));
+        let i = &b"\xFF\x00\x00\xFF"[..];
+        assert_eq!(sint16_LSBMSB(i), IResult::Done(&b""[..], (255, 255)));
+    }
 
     #[test]
     fn sint16LSBMSB_invalid() { unimplemented!(); }
