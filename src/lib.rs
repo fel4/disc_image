@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 
 #[macro_use]
+extern crate disc_image_derive;
+#[macro_use]
 extern crate nom;
 
 mod datetime;
@@ -8,8 +10,6 @@ mod numbers;
 mod strings;
 
 pub const SECTOR_SIZE: usize = 2048;
-
-
 
 struct Sector(pub [u8; SECTOR_SIZE]);
 
